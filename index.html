@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Casa Inteligente IoT</title>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+    .footer-equipo{
+    margin-top:50px;
+    padding:18px 25px;
+    background:white;
+    width:90%;
+    max-width:900px;
+    margin-left:auto;
+    margin-right:auto;
+
+    border-radius:15px;
+    box-shadow:0 8px 20px rgba(0,0,0,.08);
+
+    text-align:center;
+    font-size:16px;
+    color:#475569;
+    font-weight:600;
+    }
+
+    .footer-equipo p{
+    margin:0;
+    }
+    :root{
+    --primary:#2f80ed;
+    --success:#4caf50;
+    --danger:#ef5350;
+    --bg:#edf3f8;
+    --card:#ffffff;
+    --text:#334155;
+    --shadow:0 10px 25px rgba(0,0,0,.08);
+    }
+
+    *{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    }
+
+    body{
+    background: radial-gradient(
+        circle at top,
+        #1e3a8a,
+        #0f172a 60%
+    );
+    }
+
+    .header{
+    text-align:center;
+    margin-bottom:40px;
+    }
+
+    .header h1{
+    color:#1e3a5f;
+    font-size:42px;
+    }
+
+    .header p{
+    color:#64748b;
+    margin-top:10px;
+    font-size:18px;
+    }
+
+    /* CARDS */
+
+    .cards{
+    display:flex;
+    justify-content:center;
+    gap:25px;
+    flex-wrap:wrap;
+    margin-bottom:40px;
+    }
+
+    .card{
+    width:480px;
+    min-height:180px;
+    background:white;
+    border-radius:24px;
+    padding:30px;
+    box-shadow:var(--shadow);
+    transition:.3s;
+    }
+
+    .card:hover{
+    transform:translateY(-5px);
+    }
+
+    .card h2{
+    color:#64748b;
+    margin-bottom:20px;
+    }
+
+    .card h1{
+    font-size:65px;
+    margin-bottom:15px;
+    }
+
+    .card p{
+    font-size:18px;
+    font-weight:600;
+    }
+
+    .estado-normal{
+    border-left:8px solid var(--success);
+    }
+
+    .estado-normal h1{
+    color:var(--success);
+    }
+
+    .estado-peligro{
+    border-left:8px solid var(--danger);
+    }
+
+    .estado-peligro h1{
+    color:var(--danger);
+    }
+
+    /* TABLAS */
+
+    .container{
+    display:flex;
+    justify-content:center;
+    gap:25px;
+    flex-wrap:wrap;
+    margin-bottom:40px;
+    }
+
+    .box{
+    width:500px;
+    background:white;
+    border-radius:24px;
+    padding:25px;
+    box-shadow:var(--shadow);
+    }
+
+    .box h2{
+    margin-bottom:15px;
+    color:#1e3a5f;
+    }
+
+    table{
+    width:100%;
+    border-collapse:collapse;
+    }
+
+    th{
+    background:var(--primary);
+    color:white;
+    }
+
+    th,td{
+    padding:12px;
+    border-bottom:1px solid #e5e7eb;
+    }
+
+    tr:hover{
+    background:#f8fafc;
+    }
+
+    /* BOTONES */
+
+    button{
+    width:100%;
+    margin-top:20px;
+    padding:14px;
+    border:none;
+    border-radius:12px;
+    background:var(--primary);
+    color:white;
+    font-size:15px;
+    cursor:pointer;
+    transition:.3s;
+    }
+
+    button:hover{
+    background:#1d6fe0;
+    }
+
+    /* GRAFICA */
+    .grafica-container{
+    width:70%;
+    margin:auto;
+    }
+
+    canvas{
+    background:white;
+    border-radius:24px;
+    padding:25px;
+    box-shadow:var(--shadow);
+    width:100% !important;
+    height:500px !important;
+    }
+
+    @media(max-width:1000px){
+
+    .card{
+        width:100%;
+    }
+
+    .box{
+        width:100%;
+    }
+
+    }
+    .header-card{
+    background:linear-gradient(
+        135deg,
+        #2f80ed,
+        #bebebe
+    );
+
+    color: rgb(12, 10, 10);
+
+    width: 90%;
+    max-width: 1100px;
+    margin: 0 auto 35px auto;
+
+    padding: 25px 35px;
+
+    border-radius: 25px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    text-align: center;
+
+    gap: 25px;
+
+    font-size: 30px;
+
+    box-shadow: 0 15px 30px rgba(252, 252, 252, 0.25);
+    }
+    .header-icon{
+    width:120px;
+    height:120px;
+
+    background:rgba(102, 0, 255, 0.797);
+
+    border-radius:20px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    overflow:hidden;
+    }
+
+    .header-icon img{
+    width:90px;
+    height:90px;
+    object-fit:contain;
+    }
+
+    .header-card h1{
+    margin:0;
+    color:rgb(0, 0, 0);
+    font-size:38px;
+    text-align:left;
+    }
+
+    .header-card p{
+    margin-top:8px;
+    font-size:17px;
+    opacity:.9;
+    }
+
+    @media(max-width:700px){
+
+    .header-card{
+        flex-direction:column;
+        text-align:center;
+    }
+
+    .header-card h1{
+        text-align:center;
+    }
+    }
+  
+</style>
+
+</head>
+<body>
+
+<div class="cards">
+<div class="header-card">
+
+<div class="header-icon">
+  <img src="imagenes/nevera.png" alt="Nevera">
+</div>
+
+  <div>
+    <h1>Nevera Inteligente IoT</h1>
+    <p>Monitoreo de temperatura y humedad en tiempo real</p>
+  </div>
+
+</div>
+<div class="card" id="humCard">
+
+  <h2>💧 Humedad Actual</h2>
+
+  <h1 id="humPorcentaje">
+    0%
+  </h1>
+
+  <p id="humEstado">
+    Esperando datos...
+  </p>
+
+</div>
+
+<div class="card" id="tempCard">
+
+  <h2>🌡 Temperatura Actual</h2>
+
+  <h1 id="tempPorcentaje">
+    0°C
+  </h1>
+
+  <p id="tempEstado">
+    Esperando datos...
+  </p>
+
+</div>
+
+</div>
+
+<div class="container">
+
+  <div class="box">
+
+    <h2>💧 Historial Humedad</h2>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Valor</th>
+        </tr>
+      </thead>
+
+      <tbody id="humedadTable"></tbody>
+
+    </table>
+
+    <button onclick="mostrarGrafica('humedad')">
+      📈 Ver gráfica humedad
+    </button>
+
+  </div>
+
+  <div class="box">
+
+    <h2>🌡 Historial Temperatura</h2>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Valor</th>
+        </tr>
+      </thead>
+
+      <tbody id="tempTable"></tbody>
+
+    </table>
+
+    <button onclick="mostrarGrafica('temp')">
+      📈 Ver gráfica temperatura
+    </button>
+
+  </div>
+
+</div>
+
+<div class="grafica-container">
+  <canvas id="graficaBox"></canvas>
+</div>
+
+<script type="module">
+
+import { createClient }
+from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
+
+const supabaseUrl =
+"https://equlpatbwgevghaihlpj.supabase.co";
+
+const supabaseKey =
+"sb_publishable_5BLE9i3yGJ8R9iQw4b9Ncg_6QNhJgen";
+
+const supabase =
+createClient(supabaseUrl, supabaseKey);
+
+window.ultimosDatos = [];
+window.graficaActiva = false;
+window.tipoGraficaActual = "temp";
+
+async function cargarDatos(){
+    const { data, error } = await supabase
+  .from("sensores")
+  .select("*")
+  .order("id", { ascending:false })
+  .limit(10);
+
+if(error){
+  console.log(error);
+  return;
+}
+
+window.ultimosDatos = data;
+
+let tempHTML = "";
+let humHTML = "";
+
+data.forEach(row => {
+
+  tempHTML += `
+    <tr>
+      <td>${row.temperatura} °C</td>
+    </tr>
+  `;
+
+  humHTML += `
+    <tr>
+      <td>${row.humedad} %</td>
+    </tr>
+  `;
+
+});
+
+document.getElementById("tempTable")
+  .innerHTML = tempHTML;
+
+document.getElementById("humedadTable")
+  .innerHTML = humHTML;
+
+if(data.length > 0){
+
+  const ultimaTemp = data[0].temperatura;
+  const ultimaHum = data[0].humedad;
+
+  document.getElementById("tempPorcentaje")
+    .innerHTML = ultimaTemp + "°C";
+
+  document.getElementById("humPorcentaje")
+    .innerHTML = Math.round(ultimaHum) + "%";
+
+  const tempCard =
+    document.getElementById("tempCard");
+
+  const tempEstado =
+    document.getElementById("tempEstado");
+
+  tempCard.className = "card";
+
+  if(ultimaTemp <= 5){
+
+    tempCard.classList.add("estado-normal");
+
+    tempEstado.innerHTML =
+      "🟢 Temperatura correcta";
+
+  }else{
+
+    tempCard.classList.add("estado-peligro");
+
+    tempEstado.innerHTML =
+      "🔴 Temperatura caliente";
+
+  }
+
+  const humCard =
+    document.getElementById("humCard");
+
+  const humEstado =
+    document.getElementById("humEstado");
+
+  humCard.className = "card";
+
+  if(ultimaHum <= 70){
+
+    humCard.classList.add("estado-normal");
+
+    humEstado.innerHTML =
+      "🟢 Humedad normal";
+
+  }else{
+
+    humCard.classList.add("estado-peligro");
+
+    humEstado.innerHTML =
+      "🔴 Humedad peligrosa";
+
+  }
+
+}
+
+if(window.graficaActiva){
+  actualizarGrafica(
+    window.tipoGraficaActual
+  );
+}
+
+}
+
+window.mostrarGrafica = function(tipo){
+
+  window.graficaActiva = true;
+  window.tipoGraficaActual = tipo;
+
+  actualizarGrafica(tipo);
+
+}
+
+function actualizarGrafica(tipo){
+
+  const datos =
+    window.ultimosDatos || [];
+
+  const invertidos =
+    [...datos].reverse();
+
+  const labels =
+    invertidos.map((d,i)=>
+      "Dato " + (i+1)
+    );
+
+  const valores =
+    invertidos.map(d =>
+      tipo === "temp"
+      ? d.temperatura
+      : d.humedad
+    );
+
+  const ctx =
+    document.getElementById("graficaBox");
+
+  if(window.miGrafica){
+    window.miGrafica.destroy();
+  }
+
+  window.miGrafica = new Chart(ctx, {
+
+    type:"line",
+
+    data:{
+
+      labels,
+
+      datasets:[{
+
+        label:
+          tipo === "temp"
+          ? "Temperatura 🌡"
+          : "Humedad 💧",
+
+        data:valores,
+
+        borderColor:
+          tipo === "temp"
+          ? "#ef5350"
+          : "#2f80ed",
+
+        backgroundColor:
+          tipo === "temp"
+          ? "rgba(239,83,80,0.15)"
+          : "rgba(47,128,237,0.15)",
+
+        fill:true,
+        tension:0.4,
+        borderWidth:4,
+        pointRadius:5,
+        pointHoverRadius:8,
+        pointBackgroundColor:"#ffffff"
+
+      }]
+
+    },
+
+    options:{
+
+      responsive:true,
+
+      plugins:{
+
+        legend:{
+          labels:{
+            color:"#334155",
+            font:{
+              size:14
+            }
+          }
+        }
+
+      },
+
+      scales:{
+
+        x:{
+          ticks:{
+            color:"#334155"
+          }
+        },
+
+        y:{
+          ticks:{
+            color:"#334155"
+          }
+        }
+
+      }
+
+    }
+
+  });
+
+}
+cargarDatos();
+setInterval(cargarDatos,2000);
+</script>
+<div class="footer-equipo">
+  <p>
+    Integrantes del grupo:
+    Juan Carlos Diaz Muñoz - Daniel Camilo Paz Moreno - Juan Camilo Perez Delgado
+  </p>
+</div>
+
+</body>
+</html>
